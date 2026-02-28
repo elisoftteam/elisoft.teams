@@ -2,6 +2,6 @@ namespace Elisoft.Teams.Services
 {
     public interface ITeamsNotificator
     {
-        Task<bool> SendMessageAsync(string webhookUrl, string messageText);
+        Task<bool> SendMessageAsync(string webhookUrl, string title, string messageText);
     }
 }

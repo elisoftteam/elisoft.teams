@@ -30,7 +30,7 @@ namespace Elisoft.Teams.Tests
 
             // Act & Assert
             await Should.ThrowAsync<ArgumentException>(async () =>
-                await sut.SendMessageAsync(null!, "msg"));
+                await sut.SendMessageAsync(null!, "Test Title", "msg"));
         }
 
         [Test]
@@ -42,7 +42,7 @@ namespace Elisoft.Teams.Tests
 
             // Act & Assert
             await Should.ThrowAsync<ArgumentException>(async () =>
-                await sut.SendMessageAsync("not-a-url", "msg"));
+                await sut.SendMessageAsync("not-a-url", "Test Title", "msg"));
         }
 
         [Test]
@@ -54,7 +54,7 @@ namespace Elisoft.Teams.Tests
 
             // Act & Assert
             await Should.ThrowAsync<ArgumentException>(async () =>
-                await sut.SendMessageAsync("https://example.com", ""));
+                await sut.SendMessageAsync("https://example.com", "Test Title", ""));
         }
 
         [Test]
@@ -64,10 +64,11 @@ namespace Elisoft.Teams.Tests
             var httpClient = CreateHttpClient(HttpStatusCode.OK);
             var sut = new TeamsNotificator(httpClient, _logger);
             var url = "https://example.com";
+            var title = _fixture.Create<string>();
             var msg = _fixture.Create<string>();
 
             // Act
-            var result = await sut.SendMessageAsync(url, msg);
+            var result = await sut.SendMessageAsync(url, title, msg);
 
             // Assert
             result.ShouldBeTrue();
@@ -80,10 +81,11 @@ namespace Elisoft.Teams.Tests
             var httpClient = CreateHttpClient(HttpStatusCode.BadRequest);
             var sut = new TeamsNotificator(httpClient, _logger);
             var url = "https://example.com";
+            var title = _fixture.Create<string>();
             var msg = _fixture.Create<string>();
 
             // Act
-            var result = await sut.SendMessageAsync(url, msg);
+            var result = await sut.SendMessageAsync(url, title, msg);
 
             // Assert
             result.ShouldBeFalse();
@@ -102,10 +104,11 @@ namespace Elisoft.Teams.Tests
             var httpClient = new HttpClient(handler);
             var sut = new TeamsNotificator(httpClient, _logger);
             var url = "https://example.com";
+            var title = _fixture.Create<string>();
             var msg = _fixture.Create<string>();
 
             // Act
-            var result = await sut.SendMessageAsync(url, msg);
+            var result = await sut.SendMessageAsync(url, title, msg);
 
             // Assert
             result.ShouldBeFalse();

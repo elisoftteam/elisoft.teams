@@ -15,7 +15,7 @@ namespace Elisoft.Teams.Services
             _logger = logger;
         }
 
-        public async Task<bool> SendMessageAsync(string webhookUrl, string messageText)
+        public async Task<bool> SendMessageAsync(string webhookUrl, string title, string messageText)
         {
             if (string.IsNullOrWhiteSpace(webhookUrl))
             {
@@ -29,6 +29,11 @@ namespace Elisoft.Teams.Services
                 throw new ArgumentException(nameof(webhookUrl));
             }
 
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                title = "Powiadomienie z systemu";
+            }
+
             if (string.IsNullOrWhiteSpace(messageText))
             {
                 _logger.LogError("The message content is required.");
@@ -37,7 +42,36 @@ namespace Elisoft.Teams.Services
 
             var teamsPayloadObject = new
             {
-                text = messageText
+                type = "message",
+                attachments = new[]
+                {
+                    new
+                    {
+                        contentType = "application/vnd.microsoft.card.adaptive",
+                        content = new Dictionary<string, object>
+                        {
+                            ["type"] = "AdaptiveCard",
+                            ["body"] = new object[]
+                            {
+                                new
+                                {
+                                    type = "TextBlock",
+                                    size = "Medium",
+                                    weight = "Bolder",
+                                    text = title
+                                },
+                                new
+                                {
+                                    type = "TextBlock",
+                                    text = messageText,
+                                    wrap = true
+                                }
+                            },
+                            ["$schema"] = "http://adaptivecards.io/schemas/adaptive-card.json",
+                            ["version"] = "1.5"
+                        }
+                    }
+                }
             };
 
             var jsonPayload = JsonSerializer.Serialize(teamsPayloadObject);
